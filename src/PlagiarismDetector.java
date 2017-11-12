@@ -21,6 +21,7 @@ import java.util.Set;
 public class PlagiarismDetector {
 
 	private static Scanner in;
+	private static Object lock1 = new Object(); 
 
 	public static Map<String, Integer> detectPlagiarism(String dirName, int windowSize, int threshold) {
 		int startDetectPlagiarism = (int) System.currentTimeMillis();
@@ -94,9 +95,11 @@ public class PlagiarismDetector {
 	 * each of size "window". The Strings in each phrase are whitespace-separated.
 	 */
 	protected static Set<String> createPhrases(String filename, int window) {
-//		int start = (int) System.currentTimeMillis();
+
 		if (filename == null || window < 1) return null;
-				
+//		synchronized (lock1) {
+			
+		
 		List<String> words = readFile(filename);
 		
 		Set<String> phrases = new HashSet<String>();
@@ -110,8 +113,8 @@ public class PlagiarismDetector {
 			phrases.add(phrase);
 
 		}
-//		int end = (int) System.currentTimeMillis();
-//		System.out.println("time create Phrases " + (end - start));
+
+//		}
 		return phrases;		
 	}
 
@@ -127,18 +130,20 @@ public class PlagiarismDetector {
 //		int endFindMatches = 0;
 		Set<String> matches = new HashSet<String>();
 		
-		if (myPhrases != null && yourPhrases != null) {
 		
-			for (String mine : myPhrases) {
-				for (String yours : yourPhrases) {
-					if (mine.equalsIgnoreCase(yours)) {
-						matches.add(mine);
-					}
-				}
+			if (myPhrases != null && yourPhrases != null) {
+//			myPhrases.stream().filter(x -> yourPhrases.parallelStream().anyMatch(s -> s.equalsIgnoreCase(x))).forEach(x-> matches.add(x));
+			myPhrases.stream().filter(x -> yourPhrases.contains(x)).forEach(x-> matches.add(x));
+//				for (String mine : myPhrases) {
+//					for (String yours : yourPhrases) {
+//						if (mine.equalsIgnoreCase(yours)) {
+//							matches.add(mine);
+//						}
+//					}
+//				}
 			}
-		}
 		
-//		System.out.println("time Find matches "+ (endFindMatches-startFindMatches));
+		System.out.println("Find matches size"+ matches.size());
 		return matches;
 	}
 	
@@ -197,6 +202,21 @@ public class PlagiarismDetector {
     	for (Map.Entry<String, Integer> entry : entries) {
     		System.out.println(entry.getKey() + ": " + entry.getValue());
     	}
+    	
+//    	
+//    	Set<String> s1 = new HashSet<>();
+//    	Set<String> s2 = new HashSet<>();
+//    	Set<String> s3 = new HashSet<>();
+//    	s1.add("bruno");
+//    	s1.add("Bruno");
+//    	s1.add("Luis");
+//    	s1.add("luis");
+//    	
+//    	s2.add("bruno");
+//    	s2.add("luis");
+//    	
+//    	s1.stream().filter(x -> s2.contains(x)).forEach(x-> s3.add(x));
+//    	s3.stream().forEach(System.out::println);
     }
 
 }
