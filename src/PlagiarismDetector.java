@@ -2,14 +2,15 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * SD2x Homework #11
@@ -133,14 +134,14 @@ public class PlagiarismDetector {
 		
 			if (myPhrases != null && yourPhrases != null) {
 //			myPhrases.stream().filter(x -> yourPhrases.parallelStream().anyMatch(s -> s.equalsIgnoreCase(x))).forEach(x-> matches.add(x));
-			myPhrases.stream().filter(x -> yourPhrases.contains(x)).forEach(x-> matches.add(x));
-//				for (String mine : myPhrases) {
-//					for (String yours : yourPhrases) {
-//						if (mine.equalsIgnoreCase(yours)) {
-//							matches.add(mine);
-//						}
-//					}
-//				}
+//			matches = myPhrases.stream().filter(x -> yourPhrases.contains(x)).collect(Collectors.toSet());
+				for (String mine : myPhrases) {
+					for (String yours : yourPhrases) {
+						if (mine.equalsIgnoreCase(yours)) {
+							matches.add(mine);
+						}
+					}
+				}
 			}
 		
 		System.out.println("Find matches size"+ matches.size());
@@ -156,28 +157,30 @@ public class PlagiarismDetector {
 //		int endSortResult = 0;
 		// Because this approach modifies the Map as a side effect of printing 
 		// the results, it is necessary to make a copy of the original Map
-		Map<String, Integer> copy = new HashMap<String, Integer>();
+//		Map<String, Integer> copy = new HashMap<String, Integer>(possibleMatches);
 
-		for (String key : possibleMatches.keySet()) {
-			copy.put(key, possibleMatches.get(key));
-		}	
+//		for (String key : possibleMatches.keySet()) {
+//			copy.put(key, possibleMatches.get(key));
+//		}	
 		
-		LinkedHashMap<String, Integer> list = new LinkedHashMap<String, Integer>();
-
-		for (int i = 0; i < copy.size(); i++) {
-			int maxValue = 0;
-			String maxKey = null;
-			for (String key : copy.keySet()) {
-				if (copy.get(key) > maxValue) {
-					maxValue = copy.get(key);
-					maxKey = key;
-				}
-			}
-			
-			list.put(maxKey, maxValue);
-			
-			copy.put(maxKey, -1);
-		}
+		LinkedHashMap<String, Integer> list = possibleMatches.entrySet().stream()
+		    	.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+		    	.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+		    	(oldValue, newValue) -> oldValue, LinkedHashMap::new));;
+//		for (int i = 0; i < copy.size(); i++) {
+//			int maxValue = 0;
+//			String maxKey = null;
+//			for (String key : copy.keySet()) {
+//				if (copy.get(key) > maxValue) {
+//					maxValue = copy.get(key);
+//					maxKey = key;
+//				}
+//			}
+//			
+//			list.put(maxKey, maxValue);
+//			
+//			copy.put(maxKey, -1);
+//		}
 //		endSortResult = (int) System.currentTimeMillis();
 //		System.out.println("time Sort result "+ (endSortResult - startSortResutl));
 		return list;
@@ -198,12 +201,13 @@ public class PlagiarismDetector {
     	long end = System.currentTimeMillis();
     	double timeInSeconds = (end - start) / (double)1000;
     	System.out.println("Execution time (wall clock): " + timeInSeconds + " seconds");
-    	Set<Map.Entry<String, Integer>> entries = map.entrySet();
-    	for (Map.Entry<String, Integer> entry : entries) {
-    		System.out.println(entry.getKey() + ": " + entry.getValue());
-    	}
+    	map.entrySet().stream().forEach(System.out::println);
+//    	Set<Map.Entry<String, Integer>> entries = map.entrySet();
+//    	for (Map.Entry<String, Integer> entry : entries) {
+//    		System.out.println(entry.getKey() + ": " + entry.getValue());
+//    	}
     	
-//    	
+    	
 //    	Set<String> s1 = new HashSet<>();
 //    	Set<String> s2 = new HashSet<>();
 //    	Set<String> s3 = new HashSet<>();
@@ -215,8 +219,26 @@ public class PlagiarismDetector {
 //    	s2.add("bruno");
 //    	s2.add("luis");
 //    	
-//    	s1.stream().filter(x -> s2.contains(x)).forEach(x-> s3.add(x));
+//    	s3 = s1.stream().filter(x -> s2.contains(x)).collect(Collectors.toSet());
 //    	s3.stream().forEach(System.out::println);
+    	
+    	
+//    	Map<String, Integer> t1 = new LinkedHashMap<>();
+//    	LinkedHashMap<String, Integer> t2 = new LinkedHashMap<>();
+//    	t1.put("s", 1);
+//    	t1.put("ssd", 10);
+//    	t1.put("se", 5);
+//    	t1.put("s1", 100);
+////    	t1.entrySet().stream()
+////        .sorted(Entry.comparingByValue()).forEach(x -> t2.put(x.getKey(), x.getValue()));
+////    	
+//    	LinkedHashMap<String, Integer> result = t1.entrySet().stream()
+//    	.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+//    	.collect(Collectors.Map(Map.Entry::getKey, Map.Entry::getValue,
+//    	(oldValue, newValue) -> oldValue, LinkedHashMap::new));
+    	
+//    	result.entrySet().stream().forEach(System.out::println);
+//        
     }
 
 }
