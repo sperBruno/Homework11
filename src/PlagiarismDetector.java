@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class PlagiarismDetector {
 
 	private static Scanner in;
-	private static Object lock1 = new Object(); 
 
 	public static Map<String, Integer> detectPlagiarism(String dirName, int windowSize, int threshold) {
 		int startDetectPlagiarism = (int) System.currentTimeMillis();
@@ -69,7 +68,7 @@ public class PlagiarismDetector {
 	 * This method reads the given file and then converts it into a Collection of Strings.
 	 * It does not include punctuation and converts all words in the file to uppercase.
 	 */
-	protected static List<String> readFile(String filename) {
+	protected synchronized static List<String> readFile(String filename) {
 //		int start = (int) System.currentTimeMillis();
 		if (filename == null || filename.length() == 0) return null;
 		
@@ -95,7 +94,7 @@ public class PlagiarismDetector {
 	 * This method reads a file and converts it into a Set/List of distinct phrases,
 	 * each of size "window". The Strings in each phrase are whitespace-separated.
 	 */
-	protected static Set<String> createPhrases(String filename, int window) {
+	protected synchronized static Set<String> createPhrases(String filename, int window) {
 
 		if (filename == null || window < 1) return null;
 //		synchronized (lock1) {
