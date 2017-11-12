@@ -1,6 +1,7 @@
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -19,7 +20,11 @@ import java.util.Set;
 
 public class PlagiarismDetector {
 
+	private static Scanner in;
+
 	public static Map<String, Integer> detectPlagiarism(String dirName, int windowSize, int threshold) {
+		int startDetectPlagiarism = (int) System.currentTimeMillis();
+		
 		File dirFile = new File(dirName);
 		String[] files = dirFile.list();
 		
@@ -51,7 +56,8 @@ public class PlagiarismDetector {
 			}
 			
 		}		
-		
+		int endDetectPlagiarism = (int) System.currentTimeMillis();
+		System.out.println("Time detect Plugir " + (endDetectPlagiarism - startDetectPlagiarism));
 		return sortResults(numberOfMatches);
 
 	}
@@ -62,12 +68,13 @@ public class PlagiarismDetector {
 	 * It does not include punctuation and converts all words in the file to uppercase.
 	 */
 	protected static List<String> readFile(String filename) {
-		if (filename == null) return null;
+//		int start = (int) System.currentTimeMillis();
+		if (filename == null || filename.length() == 0) return null;
 		
-		List<String> words = new LinkedList<String>();
+		List<String> words = new ArrayList<String>();
 		
 		try {
-			Scanner in = new Scanner(new File(filename));
+			in = new Scanner(new File(filename));
 			while (in.hasNext()) {
 				words.add(in.next().replaceAll("[^a-zA-Z]", "").toUpperCase());
 			}
@@ -76,7 +83,8 @@ public class PlagiarismDetector {
 			e.printStackTrace();
 			return null;
 		}
-		
+//		int end = (int) System.currentTimeMillis();
+//		System.out.println("time read File" + (end - start));
 		return words;
 	}
 
@@ -86,6 +94,7 @@ public class PlagiarismDetector {
 	 * each of size "window". The Strings in each phrase are whitespace-separated.
 	 */
 	protected static Set<String> createPhrases(String filename, int window) {
+//		int start = (int) System.currentTimeMillis();
 		if (filename == null || window < 1) return null;
 				
 		List<String> words = readFile(filename);
@@ -101,7 +110,8 @@ public class PlagiarismDetector {
 			phrases.add(phrase);
 
 		}
-		
+//		int end = (int) System.currentTimeMillis();
+//		System.out.println("time create Phrases " + (end - start));
 		return phrases;		
 	}
 
@@ -113,7 +123,8 @@ public class PlagiarismDetector {
 	 * However, the comparison is case-insensitive.
 	 */
 	protected static Set<String> findMatches(Set<String> myPhrases, Set<String> yourPhrases) {
-	
+//		int startFindMatches = (int) System.currentTimeMillis();
+//		int endFindMatches = 0;
 		Set<String> matches = new HashSet<String>();
 		
 		if (myPhrases != null && yourPhrases != null) {
@@ -126,6 +137,8 @@ public class PlagiarismDetector {
 				}
 			}
 		}
+		
+//		System.out.println("time Find matches "+ (endFindMatches-startFindMatches));
 		return matches;
 	}
 	
@@ -134,7 +147,8 @@ public class PlagiarismDetector {
 	 * are sorted according to the value of the Integer, in non-ascending order.
 	 */
 	protected static LinkedHashMap<String, Integer> sortResults(Map<String, Integer> possibleMatches) {
-		
+//		int startSortResutl = (int)System.currentTimeMillis();
+//		int endSortResult = 0;
 		// Because this approach modifies the Map as a side effect of printing 
 		// the results, it is necessary to make a copy of the original Map
 		Map<String, Integer> copy = new HashMap<String, Integer>();
@@ -159,7 +173,8 @@ public class PlagiarismDetector {
 			
 			copy.put(maxKey, -1);
 		}
-
+//		endSortResult = (int) System.currentTimeMillis();
+//		System.out.println("time Sort result "+ (endSortResult - startSortResutl));
 		return list;
 	}
 	
