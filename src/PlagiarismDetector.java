@@ -134,14 +134,14 @@ public class PlagiarismDetector {
 		
 			if (myPhrases != null && yourPhrases != null) {
 //			myPhrases.stream().filter(x -> yourPhrases.parallelStream().anyMatch(s -> s.equalsIgnoreCase(x))).forEach(x-> matches.add(x));
-//			matches = myPhrases.stream().filter(x -> yourPhrases.contains(x)).collect(Collectors.toSet());
-				for (String mine : myPhrases) {
-					for (String yours : yourPhrases) {
-						if (mine.equalsIgnoreCase(yours)) {
-							matches.add(mine);
-						}
-					}
-				}
+			matches = myPhrases.stream().filter(x -> yourPhrases.contains(x)).collect(Collectors.toSet());
+//				for (String mine : myPhrases) {
+//					for (String yours : yourPhrases) {
+//						if (mine.equalsIgnoreCase(yours)) {
+//							matches.add(mine);
+//						}
+//					}
+//				}
 			}
 		
 		System.out.println("Find matches size"+ matches.size());
@@ -157,12 +157,12 @@ public class PlagiarismDetector {
 //		int endSortResult = 0;
 		// Because this approach modifies the Map as a side effect of printing 
 		// the results, it is necessary to make a copy of the original Map
-//		Map<String, Integer> copy = new HashMap<String, Integer>(possibleMatches);
+		Map<String, Integer> copy = new HashMap<String, Integer>(possibleMatches);
 
 //		for (String key : possibleMatches.keySet()) {
 //			copy.put(key, possibleMatches.get(key));
 //		}	
-		
+//		LinkedHashMap<String, Integer> list = new LinkedHashMap<>();
 		LinkedHashMap<String, Integer> list = possibleMatches.entrySet().stream()
 		    	.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 		    	.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
